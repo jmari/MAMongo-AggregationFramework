@@ -8,7 +8,6 @@ Class {
 BaselineOfMAAggregationFramework >> baseline: spec [
 	<baseline>
 	spec for: #common do: [ 
-		self voyage: spec.
 		self json: spec.
 		spec
 		package: 'MAMongo-AggregationFramework' with:[ spec requires: #('SCouchDB' 'Voyage') ].
@@ -28,11 +27,4 @@ BaselineOfMAAggregationFramework >> json: spec [
 	spec 
 		baseline: 'SCouchDB' with: [ spec repository: 'github://jmari/SCouchDB/repository' ];
 		import: 'json'
-]
-
-{ #category : #script }
-BaselineOfMAAggregationFramework >> voyage: spec [
-	spec 
-		baseline: 'Voyage' with: [ spec repository: 'github://pharo-nosql/voyage/mc' ];
-		import: 'mongo'
 ]
