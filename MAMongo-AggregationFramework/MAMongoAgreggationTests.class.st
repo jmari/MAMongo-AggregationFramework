@@ -30,7 +30,7 @@ MAMongoAgreggationTests >> host [
 MAMongoAgreggationTests >> jsonFile [ 
 	| working |
 	working := FileSystem disk workingDirectory.
-	^ working / 'pharo-local' / 'iceberg' / 'jmari' / 'MAMongo-AggregationFramework' / 'src' / 'activities.json' 
+	^ working / 'pharo-local' / 'iceberg' / 'jmari' / 'MAMongo-AggregationFramework' / 'activities.json' 
 	
 
 ]
