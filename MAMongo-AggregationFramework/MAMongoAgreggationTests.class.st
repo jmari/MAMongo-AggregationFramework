@@ -75,13 +75,13 @@ MAMongoAgreggationTests >> testArrayToObject [
 				'$map'->{
 					'input'->'$field_set'.
 					'in'->{
-						'k'->{'$concat'->{'field_'. '$$this.name'}}asSCJsonObject.
-						'v'->{'$max'->'$$this.value'} asSCJsonObject 
-					}asSCJsonObject 
-				} asSCJsonObject 
-			} asSCJsonObject 
-		} asSCJsonObject 
-	} asSCJsonObject .
+						'k'->{'$concat'->{'field_'. '$$this.name'}}asDictionary.
+						'v'->{'$max'->'$$this.value'} asDictionary 
+					}asDictionary 
+				} asDictionary 
+			} asDictionary 
+		} asDictionary 
+	} asDictionary .
 	result:= aggregator execute.
 
 	self assert:  ( result allSatisfy:[ :activity | activity allSatisfy:[:f | f value isArray not ]])
@@ -105,22 +105,22 @@ MAMongoAgreggationTests >> testError [
 				{'$elemMatch'->{
 					'name'->'Cliente'. 				
 					'value'-> 'Alcudia Park'.
-					} asSCJsonObject.
-				} asSCJsonObject.
-			} asSCJsonObject.
+					} asDictionary.
+				} asDictionary.
+			} asDictionary.
 			
 			{'field_set'->
 				{'$eleatch'->{
 					'name'->'FechaHora'. 				
 					'value'->{'$gt' ->((Date today - 90 days) asDate yyyymmdd)} asDictionary 
-					} asSCJsonObject.
-				} asSCJsonObject. 
-			} asSCJsonObject.
+					} asDictionary.
+				} asDictionary. 
+			} asDictionary.
 		} "and is an array"
-	} asSCJsonObject;
+	} asDictionary;
 	sort: { 
 		'in_batch_id'->1.
-	 } asSCJsonObject;
+	 } asDictionary;
 	limit: limit.
 	self should: [aggregator execute] raise: Error. 
 
@@ -146,21 +146,21 @@ MAMongoAgreggationTests >> testGroup [
 				'$map'->{
 					'input'->'$field_set'.
 					'in'->{
-						'k'->{'$concat'->{'field_'. '$$this.name'}}asSCJsonObject.
-						'v'->{'$max'->'$$this.value'} asSCJsonObject 
-					}asSCJsonObject 
-				} asSCJsonObject 
-			} asSCJsonObject 
-		} asSCJsonObject 
-	} asSCJsonObject;	
+						'k'->{'$concat'->{'field_'. '$$this.name'}}asDictionary.
+						'v'->{'$max'->'$$this.value'} asDictionary 
+					}asDictionary 
+				} asDictionary 
+			} asDictionary 
+		} asDictionary 
+	} asDictionary;	
 	project: {
 		'cliente'->'$field_set.field_cliente'.  
 		'neto'->'$field_set.field_Neto_[kg]'
-	} asSCJsonObject;
+	} asDictionary;
 	group:{
 		'_id'->'$Cliente'.
-		'peso_total'->({'$sum'->'$neto'} asSCJsonObject )
-	} asSCJsonObject.
+		'peso_total'->({'$sum'->'$neto'} asDictionary )
+	} asDictionary.
 	result:= aggregator execute.
 
 	self assert:  ( result allSatisfy:[ :activity | activity peso_total isNumber])
@@ -184,19 +184,19 @@ MAMongoAgreggationTests >> testLimit [
 				{'$elemMatch'->{
 					'name'->'Cliente'. 				
 					'value'-> 'Alcudia Park'.
-					} asSCJsonObject.
-				} asSCJsonObject.
-			} asSCJsonObject.
+					} asDictionary.
+				} asDictionary.
+			} asDictionary.
 			
 			{'field_set'->
 				{'$elemMatch'->{
 					'name'->'FechaHora'. 				
 					'value'->{'$gt' ->((Date today - 90 days) asDate yyyymmdd)} asDictionary 
-					} asSCJsonObject.
-				} asSCJsonObject. 
-			} asSCJsonObject.
+					} asDictionary.
+				} asDictionary. 
+			} asDictionary.
 		} "and is an array"
-	} asSCJsonObject;
+	} asDictionary;
 		limit: limit.
 	result := aggregator execute.
 	self assert:  ( result allSatisfy:[ :activity |  
@@ -220,19 +220,19 @@ MAMongoAgreggationTests >> testMatch [
 				{'$elemMatch'->{
 					'name'->'Cliente'. 				
 					'value'-> 'Alcudia Park'.
-					} asSCJsonObject.
-				} asSCJsonObject.
-			} asSCJsonObject.
+					} asDictionary.
+				} asDictionary.
+			} asDictionary.
 			
 			{'field_set'->
 				{'$elemMatch'->{
 					'name'->'FechaHora'. 				
 					'value'->{'$gt' ->((Date today - 90 days) asDate yyyymmdd)} asDictionary 
-					} asSCJsonObject.
-				} asSCJsonObject. 
-			} asSCJsonObject.
+					} asDictionary.
+				} asDictionary. 
+			} asDictionary.
 		} "and is an array"
-	} asSCJsonObject.
+	} asDictionary.
 
 	result := aggregator execute.
 	self assert:  ( result allSatisfy:[ :activity |  
@@ -256,23 +256,23 @@ MAMongoAgreggationTests >> testProject [
 				{'$elemMatch'->{
 					'name'->'Cliente'. 				
 					'value'-> 'Alcudia Park'.
-					} asSCJsonObject.
-				} asSCJsonObject.
-			} asSCJsonObject.
+					} asDictionary.
+				} asDictionary.
+			} asDictionary.
 			
 			{'field_set'->
 				{'$elemMatch'->{
 					'name'->'FechaHora'. 				
 					'value'->{'$gt' ->((Date today - 90 days) asDate yyyymmdd)} asDictionary 
-					} asSCJsonObject.
-				} asSCJsonObject. 
-			} asSCJsonObject.
+					} asDictionary.
+				} asDictionary. 
+			} asDictionary.
 		} "and is an array"
-	} asSCJsonObject;
+	} asDictionary;
 	project: {
 		'field_keys'->'$field_set.name'.
 		'field_values'->'$field_set.value'.
-	} asSCJsonObject.	
+	} asDictionary.	
 	result := aggregator execute.
 	self assert:  ( result allSatisfy:[ :activity | activity field_values anySatisfy:[:value | value first  = 'Alcudia Park' ]]).
 	
@@ -294,22 +294,22 @@ MAMongoAgreggationTests >> testSort [
 				{'$elemMatch'->{
 					'name'->'Cliente'. 				
 					'value'-> 'Alcudia Park'.
-					} asSCJsonObject.
-				} asSCJsonObject.
-			} asSCJsonObject.
+					} asDictionary.
+				} asDictionary.
+			} asDictionary.
 			
 			{'field_set'->
 				{'$elemMatch'->{
 					'name'->'FechaHora'. 				
 					'value'->{'$gt' ->((Date today - 90 days) asDate yyyymmdd)} asDictionary 
-					} asSCJsonObject.
-				} asSCJsonObject. 
-			} asSCJsonObject.
+					} asDictionary.
+				} asDictionary. 
+			} asDictionary.
 		} "and is an array"
-	} asSCJsonObject;
+	} asDictionary;
 	sort: { 
 		'in_batch_id'->1.
-	 } asSCJsonObject;
+	 } asDictionary;
 	limit: limit.
 	result := aggregator execute.
 	self assert:  ( result isSortedBy:[:a :b | a in_batch_id < b in_batch_id ]).
@@ -331,26 +331,26 @@ MAMongoAgreggationTests >> testUnwind [
 				{'$elemMatch'->{
 					'name'->'Cliente'. 				
 					'value'-> 'Alcudia Park'.
-					} asSCJsonObject.
-				} asSCJsonObject.
-			} asSCJsonObject.
+					} asDictionary.
+				} asDictionary.
+			} asDictionary.
 			
 			{'field_set'->
 				{'$elemMatch'->{
 					'name'->'FechaHora'. 				
 					'value'->{'$gt' ->((Date today - 90 days) asDate yyyymmdd)} asDictionary 
-					} asSCJsonObject.
-				} asSCJsonObject. 
-			} asSCJsonObject.
+					} asDictionary.
+				} asDictionary. 
+			} asDictionary.
 		} "and is an array"
-	} asSCJsonObject;
+	} asDictionary;
 	limit:10000;
 	unwind: '$field_set';
 	project:{
 		'field_key'->'$field_set.name'.
 		'field_value'->'$field_set.value'.
-	} asSCJsonObject;
-	match:{'field_key'->'Neto_[kg]'} asSCJsonObject;
+	} asDictionary;
+	match:{'field_key'->'Neto_[kg]'} asDictionary;
 	unwind:'$field_value'.
 	
 	result := aggregator execute.
