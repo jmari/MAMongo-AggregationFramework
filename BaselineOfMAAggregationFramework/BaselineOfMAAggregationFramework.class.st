@@ -10,7 +10,7 @@ BaselineOfMAAggregationFramework >> baseline: spec [
 	spec for: #common do: [ 
 		self json: spec.
 		spec
-		package: 'MAMongo-AggregationFramework' with:[ spec requires: #('SCouchDB' 'Voyage') ].
+		package: 'MAMongo-AggregationFramework' with:[ spec requires: #('SCouchDB') ].
 		self groups: spec.
 	]
 
