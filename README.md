@@ -1,6 +1,6 @@
 # Mongo-AggregationFramework
 Mongo Aggregation framework is not supported by Mongo driver in Pharo, this is a "practical" solution using the "mongo" command line.
-
+Usage is quite simple if you are used to Mongo Aggregation Framework, there are methods for each aggregation step, you should pass a 
 You need Mongo-Voyage installed on your image. This script does'nt install it.
 ```Smalltalk
 Metacello new
