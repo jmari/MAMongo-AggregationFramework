@@ -137,7 +137,7 @@ MAMongoAgreggationTests >> testGroup [
 	match:{
 		'workflow'->'00 Descarga FORM'.
 		'product_step'->1.
-	} asSCJsonObject;
+	} asDictionary;
 	project:{
 		'workflow'->1.
 		'product_step'->1.
