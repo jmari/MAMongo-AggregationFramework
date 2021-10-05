@@ -8,6 +8,13 @@ Metacello new
 	baseline:'MAAggregationFramework';
 	load
 ```
+add AggragationFramework to your baseline:
+
+```Smalltalk
+	spec 
+		baseline: 'MAAggregationFramework' with: [ spec repository: 'github://jmari/MAMongo-AggregationFramework:main' ];
+		import: 'default'
+```
 
 Example:
 ```Smalltalk
