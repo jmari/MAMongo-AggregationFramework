@@ -21,7 +21,7 @@ Example:
 	aggregator := MAMongoAggregation new.
 	aggregator 
 	database:self database;
-	collection: #MAFieldTestObj;
+	collection: #MAActivityTestObj;
 	project:{
 		'field_set'->{
 			'$arrayToObject'->{
