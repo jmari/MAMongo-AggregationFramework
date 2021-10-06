@@ -126,6 +126,10 @@ MAMongoAggregation >> database [
 
 { #category : #accessing }
 MAMongoAggregation >> database: anObject [
+"	foo                   foo database on local machine
+  	192.168.0.5/foo       foo database on 192.168.0.5 machine
+  	192.168.0.5:9999/foo  foo database on 192.168.0.5 machine on port 9999"
+	
 	database := anObject
 ]
 

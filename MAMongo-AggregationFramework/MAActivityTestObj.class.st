@@ -61,7 +61,7 @@ MAActivityTestObj class >> isVoyageRoot [
 
 { #category : #testing }
 MAActivityTestObj class >> voyageCollectionName [
-	^ 'MAFieldTestObj'
+	^ 'MAActivityTestObj'
 ]
 
 { #category : #accessing }

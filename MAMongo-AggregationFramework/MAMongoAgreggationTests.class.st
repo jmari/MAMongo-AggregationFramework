@@ -68,7 +68,7 @@ MAMongoAgreggationTests >> testArrayToObject [
 	aggregator := MAMongoAggregation new.
 	aggregator 
 	database:self database;
-	collection: #MAFieldTestObj;
+	collection: #MAActivityTestObj;
 	project:{
 		'field_set'->{
 			'$arrayToObject'->{
@@ -96,7 +96,7 @@ MAMongoAgreggationTests >> testError [
 	limit := 10.
 	aggregator 
 	database:self database;
-	collection: #MAFieldTestObj;
+	collection: #MAActivityTestObj;
 	match: { 
 		'workflow'->'00 Descarga FORM'.
 		'product_step'->1.
@@ -132,7 +132,7 @@ MAMongoAgreggationTests >> testGroup [
 	aggregator := MAMongoAggregation new.
 	aggregator 
 	database:self database;
-	collection: #MAFieldTestObj;
+	collection: #MAActivityTestObj;
 	limit:10000;
 	match:{
 		'workflow'->'00 Descarga FORM'.
@@ -175,7 +175,7 @@ MAMongoAgreggationTests >> testLimit [
 	limit := 10.
 	aggregator 
 	database:self database;
-	collection: #MAFieldTestObj;
+	collection: #MAActivityTestObj;
 	match: { 
 		'workflow'->'00 Descarga FORM'.
 		'product_step'->1.
@@ -211,7 +211,7 @@ MAMongoAgreggationTests >> testMatch [
 	aggregator := MAMongoAggregation new.
 	aggregator 
 	database:self database;
-	collection: #MAFieldTestObj;
+	collection: #MAActivityTestObj;
 	match: { 
 		'workflow'->'00 Descarga FORM'.
 		'product_step'->1.
@@ -247,7 +247,7 @@ MAMongoAgreggationTests >> testProject [
 	limit := 10.
 	aggregator 
 	database:self database;
-	collection: #MAFieldTestObj;
+	collection: #MAActivityTestObj;
 	match: { 
 		'workflow'->'00 Descarga FORM'.
 		'product_step'->1.
@@ -322,7 +322,7 @@ MAMongoAgreggationTests >> testUnwind [
 	aggregator := MAMongoAggregation new.
 	aggregator 
 	database:self database;
-	collection: #MAFieldTestObj;
+	collection: #MAActivityTestObj;
 	match: { 
 		'workflow'->'00 Descarga FORM'.
 		'product_step'->1.
