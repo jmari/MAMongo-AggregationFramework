@@ -341,7 +341,7 @@ MAMongoAggregation >> search: anExpression [
 
 { #category : #accessing }
 MAMongoAggregation >> serializer [
-	^ SCSerializer new plainJson
+	^ SCSerializer new plainJson;encodeSingleQuote 
 ]
 
 { #category : #stages }
