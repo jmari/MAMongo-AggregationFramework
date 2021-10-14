@@ -153,6 +153,7 @@ MAMongoAggregation >> execute [
 							ifFalse:[self materializer readFromString:  (self cleanMongoSpecialTags:line)])]
 	].
 	expressionCounter := 0.
+	self removeFiles.
 	^ records
 	
 
@@ -163,8 +164,9 @@ MAMongoAggregation >> executeCommand [
 	| result |
 
 	result :=LibC runCommand: self buildCommand.
+	result = 0 ifFalse:[ Error signal:(self buildErrorMessage) ].
 
-	result = 0 ifFalse:[ Error signal:(self buildErrorMessage) ]
+	
 	
 
 
