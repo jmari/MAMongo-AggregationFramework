@@ -135,7 +135,7 @@ MAMongoAggregation >> database: anObject [
 
 { #category : #accessing }
 MAMongoAggregation >> errorFilename [
-	^ '/tmp/tmpmongoq' , self query hash asString,'.err'
+	^ errorFilename ifNil:[ errorFilename := '/tmp/tmpmongoq' , self query hash hex , Time millisecondClockValue asString, '.err']
 ]
 
 { #category : #accessing }
@@ -268,7 +268,7 @@ MAMongoAggregation >> out: anExpression [
 
 { #category : #accessing }
 MAMongoAggregation >> outFilename [
-	^ '/tmp/tmpmongoq' , self query hash hex ,'.out'
+	^ outFilename ifNil:[ outFilename := '/tmp/tmpmongoq' , self query hash hex , Time millisecondClockValue asString, '.out']
 ]
 
 { #category : #execution }
@@ -315,6 +315,8 @@ MAMongoAggregation >> redact: anExpression [
 MAMongoAggregation >> removeFiles [
 	self outFilename asFileReference delete.
 	self errorFilename asFileReference delete.
+	errorFilename := nil.
+	outFilename := nil
 ]
 
 { #category : #stages }
