@@ -90,6 +90,101 @@ MAMongoAgreggationTests >> testArrayToObject [
 ]
 
 { #category : #tests }
+MAMongoAgreggationTests >> testCache [
+	| result aggregator time1 time2 |
+	aggregator := MAMongoAggregation new.
+	aggregator 
+	database:self database;
+	cacheForPowerOfTenSeconds: 2 "100 seconds";
+	collection: #MAActivityTestObj;
+	match: { 
+		'workflow'->'00 Descarga FORM'.
+		'product_step'->1.
+		'$and'-> {  
+			{'field_set'->
+				{'$elemMatch'->{
+					'name'->'Cliente'. 				
+					'value'-> 'Alcudia Park'.
+					} asDictionary.
+				} asDictionary.
+			} asDictionary.
+			
+			{'field_set'->
+				{'$elemMatch'->{
+					'name'->'FechaHora'. 				
+					'value'->{'$gt' ->((Date today - 90 days) asDate yyyymmdd)} asDictionary 
+					} asDictionary.
+				} asDictionary. 
+			} asDictionary.
+		} "and is an array"
+	} asDictionary;
+	limit:10000;
+	unwind: '$field_set';
+	project:{
+		'field_key'->'$field_set.name'.
+		'field_value'->'$field_set.value'.
+	} asDictionary;
+	match:{'field_key'->'Neto_[kg]'} asDictionary;
+	unwind:'$field_value'.
+	aggregator removeTmpFiles.
+
+
+	time1:=[result := aggregator execute] timeToRun.
+	time2:=[result := aggregator execute] timeToRun.
+	time1 inspect.time2 inspect.
+	self assert: (time1/100) > time2.
+	self assert:  ( result allSatisfy:[ :activity | activity field_value isNumber])
+]
+
+{ #category : #tests }
+MAMongoAgreggationTests >> testCacheOneSecond [
+	| result aggregator time1 time2 |
+	aggregator := MAMongoAggregation new.
+	aggregator 
+	database:self database;
+	cacheForPowerOfTenSeconds: 0 "100 seconds";
+	collection: #MAActivityTestObj;
+	match: { 
+		'workflow'->'00 Descarga FORM'.
+		'product_step'->1.
+		'$and'-> {  
+			{'field_set'->
+				{'$elemMatch'->{
+					'name'->'Cliente'. 				
+					'value'-> 'Alcudia Park'.
+					} asDictionary.
+				} asDictionary.
+			} asDictionary.
+			
+			{'field_set'->
+				{'$elemMatch'->{
+					'name'->'FechaHora'. 				
+					'value'->{'$gt' ->((Date today - 90 days) asDate yyyymmdd)} asDictionary 
+					} asDictionary.
+				} asDictionary. 
+			} asDictionary.
+		} "and is an array"
+	} asDictionary;
+	limit:10000;
+	unwind: '$field_set';
+	project:{
+		'field_key'->'$field_set.name'.
+		'field_value'->'$field_set.value'.
+	} asDictionary;
+	match:{'field_key'->'Neto_[kg]'} asDictionary;
+	unwind:'$field_value'.
+	aggregator removeTmpFiles.
+
+
+	time1:=[result := aggregator execute] timeToRun.
+	Delay forSeconds: 2.
+	time2:=[result := aggregator execute] timeToRun.
+	time1 inspect.time2 inspect.
+	self deny: (time1/100) > time2.
+	self assert:  ( result allSatisfy:[ :activity | activity field_value isNumber])
+]
+
+{ #category : #tests }
 MAMongoAgreggationTests >> testError [
 	| aggregator limit|
 	aggregator := MAMongoAggregation new.

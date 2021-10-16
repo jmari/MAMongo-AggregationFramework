@@ -6,11 +6,11 @@ Class {
 		'database',
 		'collection',
 		'outFilename',
-		'errorFilename',
 		'pathToMongoExecutable',
 		'limit',
 		'expressionCounter',
-		'materialize'
+		'materialize',
+		'cacheTime'
 	],
 	#category : #'MAMongo-AggregationFramework-Core'
 }
@@ -38,7 +38,7 @@ MAMongoAggregation >> buildCommand [
 
 	| queryString orderedQuery |
 	queryString := WriteStream on: String new.
-	orderedQuery := (self query sort:[:a :b| a first < b first]) collect:[:e | e last ].
+	orderedQuery := (self query sort:[ :a :b | a first < b first ]) collect:[:e | e last ].
 	queryString 
 		nextPutAll:'[';
 		nextPutAll:	(',' join: orderedQuery);
@@ -50,8 +50,7 @@ MAMongoAggregation >> buildCommand [
 		'db.getCollection("', self collection  ,'")', '.aggregate(',
 		queryString contents , ');'' ',
 		self database,
-		' 1>' , self outFilename,
-		' 2>' , self errorFilename)
+		' 1>' , self outFilename)
 	
 
 
@@ -64,6 +63,17 @@ MAMongoAggregation >> buildErrorMessage [
 
 		
 
+]
+
+{ #category : #'as yet unclassified' }
+MAMongoAggregation >> cacheForPowerOfTenSeconds: anInteger [
+	cacheTime :=  anInteger
+]
+
+{ #category : #'as yet unclassified' }
+MAMongoAggregation >> cacheTime [
+	"as duration"
+	^ (10 ** cacheTime) asDuration
 ]
 
 { #category : #execution }
@@ -134,13 +144,9 @@ MAMongoAggregation >> database: anObject [
 ]
 
 { #category : #accessing }
-MAMongoAggregation >> errorFilename [
-	^ errorFilename ifNil:[ errorFilename := '/tmp/tmpmongoq' , self query hash hex , Time millisecondClockValue asString, '.err']
-]
-
-{ #category : #accessing }
 MAMongoAggregation >> execute [ 
 	| readStream line records |
+	
 	self executeCommand.
 	readStream := self outFilename asFileReference readStream .
 	
@@ -153,18 +159,16 @@ MAMongoAggregation >> execute [
 							ifFalse:[self materializer readFromString:  (self cleanMongoSpecialTags:line)])]
 	].
 	expressionCounter := 0.
-	self removeFiles.
+	outFilename := nil.
 	^ records
-	
-
 ]
 
 { #category : #execution }
 MAMongoAggregation >> executeCommand [
 	| result |
-
-	result :=LibC runCommand: self buildCommand.
-	result = 0 ifFalse:[ Error signal:(self buildErrorMessage) ].
+	self outFilename asFileReference exists ifFalse:[ 
+		result :=LibC runCommand: self buildCommand.
+		result = 0 ifFalse:[ Error signal:(self buildErrorMessage) ] ].
 
 	
 	
@@ -203,10 +207,13 @@ MAMongoAggregation >> indexStats: anExpression [
 
 { #category : #initialization }
 MAMongoAggregation >> initialize [ 
+	"expressionCounter set the sorting order of stages, just for future optimization"
+	"cacheTime is used to build the output filename, it is 10**cacheTime and divides current time in millisecons, so all the times you call within the period results in the same filename=hash+time div: 10**cacheTime"
 	super initialize.
 	limit := 300.
 	materialize:= false.
-	expressionCounter := 0. "set the sorting order of stages, just for future optimization"
+	expressionCounter := 0. 
+	cacheTime := 0. 
 	
 ]
 
@@ -266,9 +273,12 @@ MAMongoAggregation >> out: anExpression [
 	self query add:(Array with:(self nextStage) with:'{$out:', (self serializer serialize: anExpression),'}')
 ]
 
-{ #category : #accessing }
+{ #category : #files }
 MAMongoAggregation >> outFilename [
-	^ outFilename ifNil:[ outFilename := '/tmp/tmpmongoq' , self query hash hex , Time millisecondClockValue asString, '.out']
+	"same namefile for n fraction of seconds"
+	| timePart |
+	timePart := (DateAndTime now asUnixTime  / (10 ** cacheTime)) asInteger.	 
+	^ outFilename ifNil:[ outFilename := '/tmp/tmpmongoq' , self query hash hex , timePart asString, '.out']
 ]
 
 { #category : #execution }
@@ -311,11 +321,10 @@ MAMongoAggregation >> redact: anExpression [
 	
 ]
 
-{ #category : #removing }
-MAMongoAggregation >> removeFiles [
-	self outFilename asFileReference delete.
-	self errorFilename asFileReference delete.
-	errorFilename := nil.
+{ #category : #files }
+MAMongoAggregation >> removeTmpFiles [
+	[ self outFilename asFileReference delete ] 
+	on:FileDoesNotExistException do:["ignore"] .
 	outFilename := nil
 ]
 
