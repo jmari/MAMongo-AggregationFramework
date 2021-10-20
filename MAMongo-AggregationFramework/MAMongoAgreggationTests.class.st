@@ -112,7 +112,7 @@ MAMongoAgreggationTests >> testCache [
 			{'field_set'->
 				{'$elemMatch'->{
 					'name'->'FechaHora'. 				
-					'value'->{'$gt' ->((Date today - 90 days) asDate yyyymmdd)} asDictionary 
+					'value'->{'$gt' ->((Date today - 10000 days) asDate yyyymmdd)} asDictionary 
 					} asDictionary.
 				} asDictionary. 
 			} asDictionary.
@@ -126,7 +126,7 @@ MAMongoAgreggationTests >> testCache [
 	} asDictionary;
 	match:{'field_key'->'Neto_[kg]'} asDictionary;
 	unwind:'$field_value'.
-	aggregator removeTmpFiles.
+	aggregator removeOldTmpFiles.
 
 
 	time1:=[result := aggregator execute] timeToRun.
@@ -142,7 +142,7 @@ MAMongoAgreggationTests >> testCacheOneSecond [
 	aggregator := MAMongoAggregation new.
 	aggregator 
 	database:self database;
-	cacheForPowerOfTenSeconds: 0 "100 seconds";
+	cacheForPowerOfTenSeconds: 0 "1 second cache";
 	collection: #MAActivityTestObj;
 	match: { 
 		'workflow'->'00 Descarga FORM'.
@@ -159,7 +159,7 @@ MAMongoAgreggationTests >> testCacheOneSecond [
 			{'field_set'->
 				{'$elemMatch'->{
 					'name'->'FechaHora'. 				
-					'value'->{'$gt' ->((Date today - 90 days) asDate yyyymmdd)} asDictionary 
+					'value'->{'$gt' ->((Date today - 10000 days) asDate yyyymmdd)} asDictionary 
 					} asDictionary.
 				} asDictionary. 
 			} asDictionary.
@@ -173,11 +173,11 @@ MAMongoAgreggationTests >> testCacheOneSecond [
 	} asDictionary;
 	match:{'field_key'->'Neto_[kg]'} asDictionary;
 	unwind:'$field_value'.
-	aggregator removeTmpFiles.
+	aggregator removeOldTmpFiles.
 
 
 	time1:=[result := aggregator execute] timeToRun.
-	Delay forSeconds: 2.
+	Delay forSeconds: 3.
 	time2:=[result := aggregator execute] timeToRun.
 	time1 inspect.time2 inspect.
 	self deny: (time1/100) > time2.
@@ -207,7 +207,7 @@ MAMongoAgreggationTests >> testError [
 			{'field_set'->
 				{'$eleatch'->{
 					'name'->'FechaHora'. 				
-					'value'->{'$gt' ->((Date today - 90 days) asDate yyyymmdd)} asDictionary 
+					'value'->{'$gt' ->((Date today - 10000 days) asDate yyyymmdd)} asDictionary 
 					} asDictionary.
 				} asDictionary. 
 			} asDictionary.
@@ -286,7 +286,7 @@ MAMongoAgreggationTests >> testLimit [
 			{'field_set'->
 				{'$elemMatch'->{
 					'name'->'FechaHora'. 				
-					'value'->{'$gt' ->((Date today - 90 days) asDate yyyymmdd)} asDictionary 
+					'value'->{'$gt' ->((Date today - 10000 days) asDate yyyymmdd)} asDictionary 
 					} asDictionary.
 				} asDictionary. 
 			} asDictionary.
@@ -322,7 +322,7 @@ MAMongoAgreggationTests >> testMatch [
 			{'field_set'->
 				{'$elemMatch'->{
 					'name'->'FechaHora'. 				
-					'value'->{'$gt' ->((Date today - 90 days) asDate yyyymmdd)} asDictionary 
+					'value'->{'$gt' ->((Date today - 10000 days) asDate yyyymmdd)} asDictionary 
 					} asDictionary.
 				} asDictionary. 
 			} asDictionary.
@@ -358,7 +358,7 @@ MAMongoAgreggationTests >> testProject [
 			{'field_set'->
 				{'$elemMatch'->{
 					'name'->'FechaHora'. 				
-					'value'->{'$gt' ->((Date today - 90 days) asDate yyyymmdd)} asDictionary 
+					'value'->{'$gt' ->((Date today - 10000 days) asDate yyyymmdd)} asDictionary 
 					} asDictionary.
 				} asDictionary. 
 			} asDictionary.
@@ -380,7 +380,7 @@ MAMongoAgreggationTests >> testSort [
 	limit := 10.
 	aggregator 
 	database:self database;
-	collection: #MAFieldTestObj;
+	collection: #MAActivityTestObj;
 	match: { 
 		'workflow'->'00 Descarga FORM'.
 		'product_step'->1.
@@ -396,7 +396,7 @@ MAMongoAgreggationTests >> testSort [
 			{'field_set'->
 				{'$elemMatch'->{
 					'name'->'FechaHora'. 				
-					'value'->{'$gt' ->((Date today - 90 days) asDate yyyymmdd)} asDictionary 
+					'value'->{'$gt' ->((Date today - 10000 days) asDate yyyymmdd)} asDictionary 
 					} asDictionary.
 				} asDictionary. 
 			} asDictionary.
@@ -409,6 +409,7 @@ MAMongoAgreggationTests >> testSort [
 	result := aggregator execute.
 	self assert:  ( result isSortedBy:[:a :b | a in_batch_id < b in_batch_id ]).
 	self assert: result size equals: limit 
+	
 ]
 
 { #category : #tests }
@@ -433,7 +434,7 @@ MAMongoAgreggationTests >> testUnwind [
 			{'field_set'->
 				{'$elemMatch'->{
 					'name'->'FechaHora'. 				
-					'value'->{'$gt' ->((Date today - 90 days) asDate yyyymmdd)} asDictionary 
+					'value'->{'$gt' ->((Date today - 10000 days) asDate yyyymmdd)} asDictionary 
 					} asDictionary.
 				} asDictionary. 
 			} asDictionary.

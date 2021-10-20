@@ -159,7 +159,7 @@ MAMongoAggregation >> execute [
 							ifFalse:[self materializer readFromString:  (self cleanMongoSpecialTags:line)])]
 	].
 	expressionCounter := 0.
-	outFilename := nil.
+	self removeOldTmpFiles.
 	^ records
 ]
 
@@ -322,9 +322,15 @@ MAMongoAggregation >> redact: anExpression [
 ]
 
 { #category : #files }
-MAMongoAggregation >> removeTmpFiles [
-	[ self outFilename asFileReference delete ] 
-	on:FileDoesNotExistException do:["ignore"] .
+MAMongoAggregation >> removeOldTmpFiles [
+	| oldFilename tmpDir |
+	 
+	oldFilename := 'tmpmongoq' , self query hash hex.
+	tmpDir := '/tmp/' asFileReference.
+	tmpDir entries do:[ :anEntry | 
+		((anEntry basename includesSubstring: oldFilename) and:[
+			(self outFilename includesSubstring: anEntry basename) not ])
+		ifTrue:[ anEntry asFileReference delete ] ]. 
 	outFilename := nil
 ]
 
