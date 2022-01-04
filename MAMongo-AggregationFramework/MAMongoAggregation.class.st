@@ -79,25 +79,29 @@ MAMongoAggregation >> cacheTime [
 { #category : #execution }
 MAMongoAggregation >> cleanMongoSpecialTags:line [
 	"cleans ObjectId and NumberLong"
+	| newLine |
+
+	newLine := self cleanMongoSpecialTags: line tag:  'ObjectId'.
+	newLine := self cleanMongoSpecialTags: newLine tag:  'NumberLong'.
+	newLine := self cleanMongoSpecialTags: newLine tag:  'ISODate'.
+	^ newLine 
+]
+
+{ #category : #execution }
+MAMongoAggregation >> cleanMongoSpecialTags:line tag: aTagName [ 
+	"cleans ObjectId and NumberLong"
 	| newLine tagPos endParentesis |
 
 	newLine := WriteStream on:String new.
-	tagPos := line findString: 'ObjectId' startingAt: 1.
+	tagPos := line findString: aTagName startingAt: 1.
 	(tagPos = 0) 
-	ifTrue:[ newLine nextPutAll:line]
+	ifTrue:[ newLine nextPutAll:line ]
 	ifFalse:[
 		(line copyFrom: 1 to: tagPos -1) putOn:newLine.
 		endParentesis := line indexOf: $) startingAt: tagPos.
-		(line copyFrom: tagPos +9 to: endParentesis -1) putOn:newLine.
-		tagPos := line findString: 'NumberLong' startingAt: tagPos.
-		(tagPos = 0) 
-		ifTrue:[(line copyFrom: endParentesis +1 to: line size) putOn:newLine]
-		ifFalse:[
-			(line copyFrom: endParentesis +1 to: tagPos -1) putOn:newLine.
-			endParentesis := line indexOf: $) startingAt: tagPos.
-			(line copyFrom: tagPos +11 to: endParentesis-1) putOn:newLine.
-			(line copyFrom: endParentesis+1 to: line size) putOn:newLine.
-		] ].
+		(line copyFrom: tagPos + aTagName size + 1 to: endParentesis -1) putOn:newLine.
+		(line copyFrom: endParentesis + 1 to: line size) putOn: newLine ].
+	
 	^ newLine contents
 ]
 
