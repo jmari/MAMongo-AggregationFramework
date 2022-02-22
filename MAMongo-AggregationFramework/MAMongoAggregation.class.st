@@ -163,6 +163,7 @@ MAMongoAggregation >> execute [
 							ifFalse:[self materializer readFromString:  (self cleanMongoSpecialTags:line)])]
 	].
 	expressionCounter := 0.
+	readStream close.
 	self removeOldTmpFiles.
 	^ records
 ]
