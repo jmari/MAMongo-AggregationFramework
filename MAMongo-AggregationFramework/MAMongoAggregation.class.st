@@ -173,6 +173,7 @@ MAMongoAggregation >> executeCommand [
 	| result |
 	self outFilename asFileReference exists ifFalse:[ 
 		result :=LibC runCommand: self buildCommand.
+		(Delay forMilliseconds: 100) wait.
 		result = 0 ifFalse:[ Error signal:(self buildErrorMessage) ] ].
 
 	
@@ -329,7 +330,7 @@ MAMongoAggregation >> redact: anExpression [
 { #category : #files }
 MAMongoAggregation >> removeOldTmpFiles [
 	| oldFilename tmpDir |
-	 
+	
 	oldFilename := 'tmpmongoq' , self query hash hex.
 	tmpDir := '/tmp/' asFileReference.
 	tmpDir entries do:[ :anEntry | 
