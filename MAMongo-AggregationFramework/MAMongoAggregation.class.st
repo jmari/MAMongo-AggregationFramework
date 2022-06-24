@@ -147,13 +147,13 @@ MAMongoAggregation >> database: anObject [
 	database := anObject
 ]
 
-{ #category : #accessing }
+{ #category : #execution }
 MAMongoAggregation >> execute [ 
 	| readStream line records |
 	
 	self executeCommand.
 	readStream := self outFilename asFileReference readStream .
-	
+	outFilename := nil.	
 	records := OrderedCollection new.
 	[ readStream atEnd ] whileFalse:[
 		line := readStream nextLine.
@@ -164,7 +164,7 @@ MAMongoAggregation >> execute [
 	].
 	expressionCounter := 0.
 	readStream close.
-	self removeOldTmpFiles.
+	"self removeOldTmpFiles."
 	^ records
 ]
 
@@ -172,6 +172,7 @@ MAMongoAggregation >> execute [
 MAMongoAggregation >> executeCommand [
 	| result |
 	self outFilename asFileReference exists ifFalse:[ 
+		self removeOldTmpFiles.
 		result :=LibC runCommand: self buildCommand.
 		result = 0 ifFalse:[ Error signal:(self buildErrorMessage) ] ].
 
@@ -215,7 +216,7 @@ MAMongoAggregation >> initialize [
 	"expressionCounter set the sorting order of stages, just for future optimization"
 	"cacheTime is used to build the output filename, it is 10**cacheTime and divides current time in millisecons, so all the times you call within the period results in the same filename=hash+time div: 10**cacheTime"
 	super initialize.
-	limit := 300.
+	limit := 5000.
 	materialize:= false.
 	expressionCounter := 0. 
 	cacheTime := 0. 
@@ -336,7 +337,7 @@ MAMongoAggregation >> removeOldTmpFiles [
 		((anEntry basename includesSubstring: oldFilename) and:[
 			(self outFilename includesSubstring: anEntry basename) not ])
 		ifTrue:[ anEntry asFileReference delete ] ]. 
-	outFilename := nil
+
 ]
 
 { #category : #stages }
