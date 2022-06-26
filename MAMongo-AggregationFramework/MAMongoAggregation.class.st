@@ -152,8 +152,7 @@ MAMongoAggregation >> execute [
 	| readStream line records |
 	
 	self executeCommand.
-	readStream := self outFilename asFileReference readStream .
-	outFilename := nil.	
+	readStream := self outFilename asFileReference readStream .	
 	records := OrderedCollection new.
 	[ readStream atEnd ] whileFalse:[
 		line := readStream nextLine.
@@ -164,7 +163,7 @@ MAMongoAggregation >> execute [
 	].
 	expressionCounter := 0.
 	readStream close.
-	"self removeOldTmpFiles."
+	outFilename := nil.
 	^ records
 ]
 
