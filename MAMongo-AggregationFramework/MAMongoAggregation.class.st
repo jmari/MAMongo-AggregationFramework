@@ -10,7 +10,11 @@ Class {
 		'limit',
 		'expressionCounter',
 		'materialize',
-		'cacheTime'
+		'cacheTime',
+		'mutex'
+	],
+	#classVars : [
+		'mutex'
 	],
 	#category : #'MAMongo-AggregationFramework-Core'
 }
@@ -211,7 +215,7 @@ MAMongoAggregation >> indexStats: anExpression [
 ]
 
 { #category : #initialization }
-MAMongoAggregation >> initialize [ 
+MAMongoAggregation >> initialize [
 	"expressionCounter set the sorting order of stages, just for future optimization"
 	"cacheTime is used to build the output filename, it is 10**cacheTime and divides current time in millisecons, so all the times you call within the period results in the same filename=hash+time div: 10**cacheTime"
 	super initialize.
@@ -219,7 +223,8 @@ MAMongoAggregation >> initialize [
 	materialize:= false.
 	expressionCounter := 0. 
 	cacheTime := 0. 
-	
+	"mutex is class variable"
+	mutex ifNil:[ mutex :=  Mutex new].
 ]
 
 { #category : #stages }
@@ -329,13 +334,17 @@ MAMongoAggregation >> redact: anExpression [
 { #category : #files }
 MAMongoAggregation >> removeOldTmpFiles [
 	| oldFilename tmpDir |
-	
-	oldFilename := 'tmpmongoq' , self query hash hex.
-	tmpDir := '/tmp/' asFileReference.
-	tmpDir entries do:[ :anEntry | 
-		((anEntry basename includesSubstring: oldFilename) and:[
-			(self outFilename includesSubstring: anEntry basename) not ])
-		ifTrue:[ anEntry asFileReference delete ] ]. 
+
+	mutex critical:[  
+		MAMongoAggregation allInstances size > 1 ifFalse:[ 
+		oldFilename := 'tmpmongoq' , self query hash hex.
+		tmpDir := '/tmp/' asFileReference.
+		tmpDir entries do:[ :anEntry | 
+			((anEntry basename includesSubstring: oldFilename) and:[
+				(self outFilename includesSubstring: anEntry basename) not ])
+			ifTrue:[ anEntry asFileReference deleteIfAbsent: [ "nothing-other thread has deleted this file" ] ] ]
+		]
+	] . 
 
 ]
 
